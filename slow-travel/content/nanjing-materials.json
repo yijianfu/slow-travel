@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "collectedOn": "2026-10-31",
+  "timezone": "Asia/Shanghai",
+  "city": "南京",
+  "collectionStatus": "archived_texts_collected_originals_unverified",
+  "accessNote": "小红书原帖未能直接读取；下列摘要据公开第三方存档整理，不代表已核验原帖、作者、图片或当前出行规则。",
+  "sources": [
+    {
+      "id": "S01",
+      "title": "南京旅游攻略｜土著闺蜜4h手写～??",
+      "noteId": "669100bd000000000a024832",
+      "originalUrl": "https://www.xiaohongshu.com/explore/669100bd000000000a024832?xsec_token=CBRwdFcO1h7U6wonGw7Ox-I8FPRlt5Z2S2exJMpyJgKTw=&xsec_source=pc_feed",
+      "archiveUrl": "https://6li6.com/xiaohongshu/view-65541",
+      "archiveTimestampAsDisplayed": "2024-08-09 13:03:43",
+      "originalPublishedAt": null,
+      "author": null,
+      "originalVerified": false,
+      "evidenceLevel": "third_party_archived_text",
+      "summary": "景点和住宿区域候选，包含秦淮、人文场馆、湖边与钟山观景；正文指向图片路线，本批未核实图片内容。",
+      "usableFor": ["candidate_places", "accommodation_areas"],
+      "currentOperationalDetailsVerified": false
+    },
+    {
+      "id": "S02",
+      "title": "南京三天两夜旅游攻略【超全版】",
+      "noteId": "667da849000000001c0271fe",
+      "originalUrl": "https://www.xiaohongshu.com/explore/667da849000000001c0271fe?xsec_token=CBIr-a7kJm-ftbwMkw_nl10w58uUdJzVajs9627z5xXAA=&xsec_source=pc_feed",
+      "archiveUrl": "https://6li6.com/xiaohongshu/view-65101",
+      "archiveTimestampAsDisplayed": "2024-08-09 02:33:49",
+      "originalPublishedAt": null,
+      "author": null,
+      "originalVerified": false,
+      "evidenceLevel": "third_party_archived_text",
+      "summary": "场馆、山林、街区的候选清单；已读正文没有完整逐日路线。旧票价、预约天数和店铺榜单不进入规划数据。",
+      "usableFor": ["candidate_places", "interest_categories"],
+      "currentOperationalDetailsVerified": false
+    },
+    {
+      "id": "S03",
+      "title": "南京旅游攻略",
+      "editorialLabel": "高温与人流体验",
+      "noteId": "66c221e30000000025031e77",
+      "originalUrl": "https://www.xiaohongshu.com/explore/66c221e30000000025031e77?xsec_token=ABE801SFehewMfAtiReonoXVfWz3_jaQYlHmDUMkFkOeE=&xsec_source=pc_user",
+      "archiveUrl": "https://6li6.com/xiaohongshu/view-79754",
+      "archiveTimestampAsDisplayed": "2024-09-18 05:52:15",
+      "originalPublishedAt": null,
+      "author": null,
+      "originalVerified": false,
+      "evidenceLevel": "third_party_archived_text",
+      "summary": "个人游后反馈涉及高温、人流、湖区尺度和观光车体验。用于提醒保留休息及调整空间，不推广为景点的一般结论。",
+      "usableFor": ["planning_considerations", "journal_structure"],
+      "currentOperationalDetailsVerified": false
+    },
+    {
+      "id": "S04",
+      "title": "J人属性大爆发?吐血整理南京超全旅游",
+      "noteId": "66af89c90000000027010515",
+      "originalUrl": "https://www.xiaohongshu.com/explore/66af89c90000000027010515?xsec_token=CB0BPILVS45kXU4m1-rFz4cahmDKItOFMFUlAKrAEA7Jg=&xsec_source=pc_feed",
+      "archiveUrl": "https://6li6.com/xiaohongshu/view-65534",
+      "archiveTimestampAsDisplayed": "2024-08-09 12:34:32",
+      "originalPublishedAt": null,
+      "author": null,
+      "originalVerified": false,
+      "evidenceLevel": "third_party_archived_text",
+      "summary": "住宿按预算与交通位置取舍，并提前关注天气；含大量商家描述，本批不将其转成商家推荐。",
+      "usableFor": ["preparation_checklist", "accommodation_areas"],
+      "currentOperationalDetailsVerified": false
+    }
+  ],
+  "candidatePlaces": [
+    { "id": "xuanwu-lake", "name": "玄武湖", "category": "湖边散步", "sourceIds": ["S01", "S03"], "status": "candidate" },
+    { "id": "wutong-avenue", "name": "梧桐大道", "category": "树影与散步", "sourceIds": ["S01", "S03"], "status": "candidate", "note": "通俗称呼，具体路段待确认。" },
+    { "id": "music-stage", "name": "音乐台", "category": "山林与建筑", "sourceIds": ["S03"], "status": "candidate" },
+    { "id": "sun-yat-sen-mausoleum", "name": "中山陵", "category": "历史人文", "sourceIds": ["S02"], "status": "candidate" },
+    { "id": "meiling-palace", "name": "美龄宫", "category": "历史建筑", "sourceIds": ["S02"], "status": "candidate" },
+    { "id": "ming-xiaoling", "name": "明孝陵", "category": "历史人文", "sourceIds": ["S02"], "status": "candidate" },
+    { "id": "laomendong", "name": "老门东", "category": "老城街巷", "sourceIds": ["S02", "S04"], "status": "candidate" },
+    { "id": "fuzimiao-qinhuai", "name": "夫子庙与秦淮河周边", "category": "夜间散步", "sourceIds": ["S01", "S02", "S03"], "status": "candidate", "note": "区域集合，实际游览点和入口待细化。" },
+    { "id": "nanjing-museum", "name": "南京博物院", "category": "文博", "sourceIds": ["S02"], "status": "candidate" },
+    { "id": "six-dynasties-museum", "name": "六朝博物馆", "category": "文博", "sourceIds": ["S02"], "status": "candidate" },
+    { "id": "imperial-examination-museum", "name": "中国科举博物馆", "category": "文博", "sourceIds": ["S01"], "status": "candidate" },
+    { "id": "presidential-palace", "name": "总统府", "category": "历史人文", "sourceIds": ["S02"], "status": "candidate" },
+    { "id": "jimingsi", "name": "鸡鸣寺", "category": "历史建筑", "sourceIds": ["S02"], "status": "candidate" },
+    { "id": "niushoushan", "name": "牛首山", "category": "山林与建筑", "sourceIds": ["S01"], "status": "candidate" },
+    { "id": "nanjing-massacre-memorial", "name": "侵华日军南京大屠杀遇难同胞纪念馆", "category": "纪念场馆", "sourceIds": ["S02", "S03"], "status": "candidate" }
+  ],
+  "accommodationAreaCandidates": [
+    { "name": "新街口", "sourceIds": ["S01", "S04"] },
+    { "name": "张府园", "sourceIds": ["S01"] },
+    { "name": "大行宫", "sourceIds": ["S01"] },
+    { "name": "玄武湖周边", "sourceIds": ["S01"] }
+  ],
+  "planningPrompts": [
+    "出发日期确定后核实预约、开放时间和票价。",
+    "按兴趣从候选中取舍，不把所有地点排进同一次旅行。",
+    "核实步行路段与景区内交通，给休息留出时间。",
+    "正文中的店铺描述只作为来源线索，不代表已经验证的推荐。"
+  ],
+  "initialTripState": {
+    "status": "planned",
+    "dates": null,
+    "days": null,
+    "plan": [],
+    "journal": [],
+    "photos": []
+  }
+}
