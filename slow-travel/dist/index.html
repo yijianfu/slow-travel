@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f4ea">
+  <meta name="referrer" content="no-referrer">
+  <title>慢慢走 · 旅行手账</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script defer src="/app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到正文</a>
+  <svg class="symbols" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <symbol id="mark" viewBox="0 0 52 42">
+        <path d="M3 29Q13 23 24 29V9Q13 3 3 9ZM49 29Q38 23 28 29V9Q39 3 49 9Z" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/>
+        <path d="m7 22 6-7 4 4 4-3m10 6 6-9 8 7M3 35q12-6 23 0 11-6 23 0" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="nanjing-cut" viewBox="0 0 600 340">
+        <rect width="600" height="340" fill="#e7e6c7"/>
+        <circle cx="443" cy="72" r="37" fill="#deac64"/>
+        <path fill="#c2cbae" d="m0 157 42-14 26 1 64-29 31 6 39-25 22 5 43-27 24 11 19-5 36 21 28-8 37 27 26-5 28 11 25-6 71 22 39-6v96H0Z"/>
+        <path fill="#a6b797" d="m0 158 41-6 28 9 38-26 31 6 16-8 29 6 22-9 22 13 29-21 18 7 43-19 33 22 33-2 14 8 27-15 35 20 64-14 25 10 52-16v98H0Z"/>
+        <path fill="#82977d" d="m0 162 41 6 37-10 31 7 40-8 20 9 47-7 30 8 37-15 19 8 27-10 47 15 35-9 40 7 31-13 27 8 26-11 65 12v52H0Z"/>
+        <path fill="#586f5e" d="M0 182q53-19 104-3 45-17 87-6 57-15 125 2 51-12 104-4 50-15 97-5 34-7 83-3v51H0Z"/>
+        <path fill="#3c5648" d="M0 197q111-23 213 0 88-12 176-4 108-18 211-7v36H0Z"/>
+        <path fill="#b6c4ae" d="M0 215q134-15 267 1 174-16 333-15v139H0Z"/>
+        <g fill="none" stroke="#6e897d" opacity=".65" stroke-linecap="round">
+          <path d="M24 239q47-3 108 0m-88 7h52m105-13q44-3 84 0m37 16q66-5 143-1m-101 7h45m-213 16q48-5 101-1m-86 8h56m202-54h70m-7 50h54M30 289h111m-62 6h41m197 6h89m-61 6h25m21 20h86"/>
+        </g>
+        <g stroke="#354e42" stroke-width="1.7" stroke-linejoin="round">
+          <path fill="#9aa38b" d="m78 181 65-18 81 12-1 36-149 7Z"/>
+          <path fill="#b2ae91" d="m135 164 89-18 50 12-1 47-138 12Z"/>
+          <path fill="#c9bd9d" d="m223 154 105-15 27 14-2 50-132 9Z"/>
+          <path fill="#7f8d77" d="m328 139 32 14 77 3 3 46-87 1 2-50Z"/>
+          <path fill="#aeaa8d" d="m351 164 89-7 62 8 9 36-156 3Z"/>
+          <path fill="#364d41" d="m250 208 2-15q1-13 13-14 10 0 10 13v14Zm54-4 1-15q1-11 10-12 8 0 8 10v16Z"/>
+          <path fill="#d9caae" d="m240 153 0-21 62-9 18 7v16Z"/>
+          <path fill="#4e6655" d="m228 132 13-5 13-12 35-5 10 6 16 3 14 7-9 5-19-4-61 10Z"/>
+          <path fill="#bdb394" d="m252 116 0-13 32-4 11 4v10Z"/>
+          <path fill="#405a49" d="m242 104 9-4 10-12 18-3 7 9 13 4 6 3-11 3-10-3-32 5Z"/>
+          <path fill="none" d="m260 87 18-3m-16 22v8m9-10v9m8-10v9m-28 24v14m11-16v14m12-16v14m11-16v14m12-15v14m12-13v13"/>
+        </g>
+        <g fill="none" stroke="#647660" stroke-width="1" opacity=".85">
+          <path d="m90 191 43-7m-45 15 45-6m14-16 65-9m-68 17 69-10m-64 18 62-9m24-21 88-12m-87 18 87-11m-88 18 23-3m23-2 42-6m49 11 65-4m-69 11 61-3m21-18 47 4m-43 3 45 3"/>
+          <path d="m101 189 1 7m14-10 1 7m41-20v6m16-8v6m20-10v6m-31 4v7m22-10v7m54-31v5m17-8v6m16-9v6m18-9v6m-42 6v6m35-11v6m72-2v7m24-8v7"/>
+        </g>
+        <path fill="#4e6856" d="M0 203q44-5 84 0l67 13-81 1 39 6-109 5Zm600-16q-63-7-121 6l-57 13 60 1-17 4 135 5Z"/>
+        <g fill="#334e42"><path d="m415 252 43-1-7 5-24 1Zm11-2 6-6 15-1 6 7Z"/><path d="m429 249 4-4 11-1 5 5Z" fill="#d6c6a4"/><path d="m446 245 7-12 1 1-7 12Z"/></g>
+        <g fill="#405c47" stroke="#405c47" stroke-linecap="round"><path d="M36 209q5-45-10-84m11 47 14-26m-18 10L14 139" fill="none" stroke-width="4"/><path d="M-10 137q2-12 18-12 3-15 17-16 10-8 19 6 15 3 14 13 11 10-4 14-7 6-19 1-15 8-24-2-13 4-21-4Z"/><path d="M29 153q5-11 17-10 10-13 22 0 16 5 6 13-16 5-24 0-12 5-21-3Z"/></g>
+        <g fill="none" stroke="#577251" stroke-width="2"><path d="M1 128q9-8 19-2m-3-10q9-7 19-1m6 16q6-4 14 1m-8 17q9-6 17 0"/></g>
+        <path fill="#779077" d="M0 300q63-17 99-3 29 9 66 6-1 8-49 10l39 8-155-1Zm600-12q-46 0-81 13l-31 10 69-6-22 8 65 3Z"/>
+        <path fill="#58735c" d="M0 308q49-13 82-8l39 5-59-1 15 5-77 7Zm600-9q-28 1-52 11l52-5Z"/>
+        <g fill="none" stroke="#485e4b" stroke-width="1.8" stroke-linecap="round"><path d="m122 64 6-1 4 4q2-5 9-6m-41 14 5-1 4 3 6-5m274-22 4 0 3 3 4-4"/></g>
+      </symbol>
+    </defs>
+  </svg>
+  <header id="topbar"></header>
+  <main id="main" tabindex="-1"><p class="loading">正在翻开手账…</p></main>
+  <footer id="colophon"></footer>
+  <dialog id="editor" aria-labelledby="modal-title"></dialog>
+  <div id="notice" role="status" aria-live="polite"></div>
+  <noscript>请启用 JavaScript 以打开旅行手账。</noscript>
+</body>
+</html>

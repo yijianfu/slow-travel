@@ -1,0 +1,12 @@
+{
+  "name": "slow-travel-journal",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=24.0.0" },
+  "scripts": {
+    "start": "node slow-travel/server/start.mjs",
+    "test": "node --test slow-travel/tests/*.test.mjs",
+    "build": "node slow-travel/hosted/build.mjs"
+  }
+}

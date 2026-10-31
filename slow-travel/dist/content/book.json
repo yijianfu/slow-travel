@@ -1,0 +1,184 @@
+{
+  "version": 1,
+  "trips": [
+    {
+      "id": "nanjing-first",
+      "title": "南京，终于出发",
+      "city": "南京",
+      "startDate": "",
+      "days": null,
+      "status": "planned",
+      "candidates": [
+        {
+          "id": "xuanwu-lake",
+          "name": "玄武湖",
+          "category": "湖边散步",
+          "state": "candidate",
+          "sourceIds": [
+            "S01",
+            "S03"
+          ]
+        },
+        {
+          "id": "wutong-avenue",
+          "name": "梧桐大道",
+          "category": "树影与散步",
+          "state": "candidate",
+          "sourceIds": [
+            "S01",
+            "S03"
+          ]
+        },
+        {
+          "id": "music-stage",
+          "name": "音乐台",
+          "category": "山林与建筑",
+          "state": "candidate",
+          "sourceIds": [
+            "S03"
+          ]
+        },
+        {
+          "id": "sun-yat-sen-mausoleum",
+          "name": "中山陵",
+          "category": "历史人文",
+          "state": "candidate",
+          "sourceIds": [
+            "S02"
+          ]
+        },
+        {
+          "id": "meiling-palace",
+          "name": "美龄宫",
+          "category": "历史建筑",
+          "state": "candidate",
+          "sourceIds": [
+            "S02"
+          ]
+        },
+        {
+          "id": "ming-xiaoling",
+          "name": "明孝陵",
+          "category": "历史人文",
+          "state": "candidate",
+          "sourceIds": [
+            "S02"
+          ]
+        },
+        {
+          "id": "laomendong",
+          "name": "老门东",
+          "category": "老城街巷",
+          "state": "candidate",
+          "sourceIds": [
+            "S02",
+            "S04"
+          ]
+        },
+        {
+          "id": "fuzimiao-qinhuai",
+          "name": "夫子庙与秦淮河周边",
+          "category": "夜间散步",
+          "state": "candidate",
+          "sourceIds": [
+            "S01",
+            "S02",
+            "S03"
+          ]
+        },
+        {
+          "id": "nanjing-museum",
+          "name": "南京博物院",
+          "category": "文博",
+          "state": "candidate",
+          "sourceIds": [
+            "S02"
+          ]
+        },
+        {
+          "id": "six-dynasties-museum",
+          "name": "六朝博物馆",
+          "category": "文博",
+          "state": "candidate",
+          "sourceIds": [
+            "S02"
+          ]
+        },
+        {
+          "id": "imperial-examination-museum",
+          "name": "中国科举博物馆",
+          "category": "文博",
+          "state": "candidate",
+          "sourceIds": [
+            "S01"
+          ]
+        },
+        {
+          "id": "presidential-palace",
+          "name": "总统府",
+          "category": "历史人文",
+          "state": "candidate",
+          "sourceIds": [
+            "S02"
+          ]
+        },
+        {
+          "id": "jimingsi",
+          "name": "鸡鸣寺",
+          "category": "历史建筑",
+          "state": "candidate",
+          "sourceIds": [
+            "S02"
+          ]
+        },
+        {
+          "id": "niushoushan",
+          "name": "牛首山",
+          "category": "山林与建筑",
+          "state": "candidate",
+          "sourceIds": [
+            "S01"
+          ]
+        },
+        {
+          "id": "nanjing-massacre-memorial",
+          "name": "侵华日军南京大屠杀遇难同胞纪念馆",
+          "category": "纪念场馆",
+          "state": "candidate",
+          "sourceIds": [
+            "S02",
+            "S03"
+          ]
+        }
+      ],
+      "plan": [],
+      "journal": []
+    }
+  ],
+  "sources": [
+    {
+      "id": "S01",
+      "title": "南京旅游攻略｜土著闺蜜4h手写～??",
+      "archiveUrl": "https://6li6.com/xiaohongshu/view-65541",
+      "originalUrl": "https://www.xiaohongshu.com/explore/669100bd000000000a024832?xsec_token=CBRwdFcO1h7U6wonGw7Ox-I8FPRlt5Z2S2exJMpyJgKTw=&xsec_source=pc_feed"
+    },
+    {
+      "id": "S02",
+      "title": "南京三天两夜旅游攻略【超全版】",
+      "archiveUrl": "https://6li6.com/xiaohongshu/view-65101",
+      "originalUrl": "https://www.xiaohongshu.com/explore/667da849000000001c0271fe?xsec_token=CBIr-a7kJm-ftbwMkw_nl10w58uUdJzVajs9627z5xXAA=&xsec_source=pc_feed"
+    },
+    {
+      "id": "S03",
+      "title": "南京旅游攻略",
+      "archiveUrl": "https://6li6.com/xiaohongshu/view-79754",
+      "originalUrl": "https://www.xiaohongshu.com/explore/66c221e30000000025031e77?xsec_token=ABE801SFehewMfAtiReonoXVfWz3_jaQYlHmDUMkFkOeE=&xsec_source=pc_user"
+    },
+    {
+      "id": "S04",
+      "title": "J人属性大爆发?吐血整理南京超全旅游",
+      "archiveUrl": "https://6li6.com/xiaohongshu/view-65534",
+      "originalUrl": "https://www.xiaohongshu.com/explore/66af89c90000000027010515?xsec_token=CB0BPILVS45kXU4m1-rFz4cahmDKItOFMFUlAKrAEA7Jg=&xsec_source=pc_feed"
+    }
+  ]
+}

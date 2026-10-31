@@ -31,3 +31,4 @@ Thumbs.db
 Desktop.ini
 
 # slow-travel/dist is planned as authored static source; do not ignore it.
+/dist/
