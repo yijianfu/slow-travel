@@ -26,7 +26,7 @@ async function collect(directory) {
   }
 }
 await collect(pages);
-for (const required of ['/index.html','/app.js','/styles.css','/content/book.json','/assets/china-map.svg','/assets/cities.js','/assets/city-map.js','/assets/nanjing-cover.webp']) {
+for (const required of ['/index.html','/app.js','/styles.css','/content/book.json','/assets/china-map.svg','/assets/cities.js','/assets/city-map.js','/assets/atlas.js','/assets/city-pages.js','/assets/atlas.css','/assets/nanjing-cover.webp']) {
   if (!files[required]) throw new Error('Missing page resource: ' + required);
 }
 const model = await readFile(path.join(root, 'slow-travel/server/model.mjs'), 'utf8');

@@ -294,3 +294,24 @@ test('cloud rejects uploads that would exceed the owner photo storage limit even
   assert.equal((await site.bucket.list({ prefix: '' })).objects.length, 0);
   assert.equal((await site.request('/api/photos', { owner: 'owner-b', method: 'POST', bytes: pixel })).status, 201);
 });
+
+test('expired cover uploads remain available in the current book and share snapshots',async t=>{
+  const site=fixture(t);
+  const {book,tag}=await site.open();
+  const first=await site.upload(),second=await site.upload(),orphan=await site.upload();
+  book.trips[0].cover={...first,caption:''};
+  let saved=await site.request('/api/book',{method:'PUT',tag,json:book});
+  assert.equal(saved.status,200);
+  const shared=await site.share(book.trips[0].id);
+  book.trips[0].cover={...second,caption:''};
+  saved=await site.request('/api/book',{method:'PUT',tag:saved.headers.get('etag'),json:book});
+  assert.equal(saved.status,200);
+  site.db.prepare('UPDATE journal_photos SET created_at=?').run(Math.floor(Date.now()/1000)-90000);
+  await site.upload();
+  assert.equal((await site.request(orphan.url)).status,404);
+  assert.equal((await site.request(second.url)).status,200);
+  assert.equal((await site.request(shared.endpoint+'/photos/'+first.id,{owner:null})).status,200);
+  const backup=await (await site.request('/api/backup')).json();
+  assert.equal(backup.photos[0].id,second.id);
+  assert.equal((await site.request('/api/book',{method:'PUT',tag:saved.headers.get('etag'),json:book})).status,200);
+});

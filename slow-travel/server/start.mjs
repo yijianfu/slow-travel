@@ -84,7 +84,7 @@ async function serveStatic(pathname, req, res, directory) {
   if (!['GET','HEAD'].includes(req.method)) throw new HttpError(405,'请求方式无效');
   const shell = pathname === '/' || pathname === '/index.html' || /^\/s\/[A-Za-z0-9_-]{32}$/.test(pathname);
   const allowed = ['/app.js','/styles.css','/favicon.ico'].includes(pathname) ||
-    /^\/assets\/(?:[\w-]+\/)*[\w.-]+\.(?:js|svg|png|jpe?g|webp|ico|woff2?)$/i.test(pathname);
+    /^\/assets\/(?:[\w-]+\/)*[\w.-]+\.(?:css|js|svg|png|jpe?g|webp|ico|woff2?)$/i.test(pathname);
   if (!shell && !allowed) throw new HttpError(404,'页面不存在');
   try {
     const root = await realpath(directory);

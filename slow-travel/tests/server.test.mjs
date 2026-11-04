@@ -38,6 +38,8 @@ async function fixture(t, options={}) {
   const distDir = join(root,'dist');
   await mkdir(distDir);
   await writeFile(join(distDir,'index.html'),'<title>慢慢走</title>');
+  await mkdir(join(distDir,'assets'));
+  await writeFile(join(distDir,'assets','atlas.css'),'.atlas-paper{position:relative}');
   let server;
   let base;
   async function close() {
@@ -122,6 +124,9 @@ test('shares hide private plans, expose only selected photos and are revocable; 
 
 test('local service rejects foreign Host, cross-origin mutations, invalid uploads and private static paths',async t => {
   const site = await fixture(t);
+  const atlasStyle=await site.request('/assets/atlas.css');
+  assert.equal(atlasStyle.status,200);
+  assert.match(atlasStyle.headers.get('content-type'),/text\/css/);
   assert.equal((await site.request('/private/journal.sqlite')).status,404);
   assert.equal((await site.request('/content/book.json')).status,404);
   assert.equal((await site.request('/api/book',{headers:{Host:'attacker.invalid'}})).status,403);

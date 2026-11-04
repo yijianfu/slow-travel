@@ -106,12 +106,16 @@ async function collectUnusedPhotos(env, owner, album) {
     SELECT json_extract(p.value,'$.id')
     FROM ${table} AS b, json_each(b.body,'$.trips') AS t,
       json_each(t.value,'$.journal') AS e, json_each(e.value,'$.photos') AS p
-    WHERE b.owner=? AND b.album=?`;
+    WHERE b.owner=? AND b.album=?
+    UNION ALL
+    SELECT json_extract(t.value,'$.cover.id')
+    FROM ${table} AS b, json_each(b.body,'$.trips') AS t
+    WHERE b.owner=? AND b.album=? AND json_extract(t.value,'$.cover.id') IS NOT NULL`;
   await env.DB.prepare(`
     UPDATE journal_photos SET retiring=1
     WHERE owner=? AND album=? AND retiring=0 AND created_at < unixepoch()-86400
       AND id NOT IN (${referencesIn('journals')} UNION ALL ${referencesIn('journal_shares')})`)
-    .bind(owner,album,owner,album,owner,album).run();
+    .bind(owner,album,owner,album,owner,album,owner,album,owner,album).run();
   const retired = await env.DB.prepare('SELECT id FROM journal_photos WHERE owner=? AND album=? AND retiring=1 LIMIT 256')
     .bind(owner,album).all();
   const ids = retired.results.map(p => p.id);
@@ -248,7 +252,7 @@ async function dispatch(request, env, ctx) {
   if (!owner) reject(401,'请登录后打开个人手账');
   const row = await journal(env.DB,owner);
   if (route === '/api/book') {
-    if (method === 'GET') return reply(JSON.parse(row.body),200,{etag:etag(row.revision)});
+    if (method === 'GET') return reply(MODEL.validateBook(JSON.parse(row.body)),200,{etag:etag(row.revision)});
     if (method === 'PUT') {
       checkRevision(request,row);
       return replaceBook(env,owner,row,validated(MODEL.validateBook,await bodyJson(request,MODEL.BOOK_LIMIT)));

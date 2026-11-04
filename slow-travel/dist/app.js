@@ -21,6 +21,7 @@ let selectedTripId = '';
 let actionFocus = null;
 
 const icons = {
+  cart: '<path d="M3 3h2l3 12h10l3-9H6M9 19h.01M18 19h.01"/><circle cx="9" cy="19" r="1"/><circle cx="18" cy="19" r="1"/>',
   arrow: '<path d="M4 12h15m-5-5 5 5-5 5"/>',
   back: '<path d="M20 12H5m5-5-5 5 5 5"/>',
   down: '<path d="m6 9 6 6 6-6"/>',
@@ -120,45 +121,9 @@ function masthead() {
   const brand = `<svg width="36" height="31" aria-hidden="true"><use href="#mark"/></svg><span>慢慢走</span>`;
   topbar.innerHTML = `<div class="bar"><a class="brand" href="${readonly ? esc(location.pathname) : '#/'}" aria-label="慢慢走，${readonly ? '共享手账' : '首页'}">${brand}</a>
     <span class="brand-caption">TRAVEL JOURNAL</span>
-    ${readonly ? '<span class="private-label">只读手账</span></div>' : `<nav class="topnav" aria-label="主导航"><a href="#/shelf">${icon('book')}<span>旅行书架</span></a><a href="#/map">${icon('map')}<span>城市地图</span></a></nav>
+    ${readonly ? '<span class="private-label">只读手账</span></div>' : `<nav class="topnav" aria-label="主导航"><a href="#/">${icon('map')}<span>我的地图</span></a><a href="#/shelf">${icon('book')}<span>全部旅行</span></a></nav>
     <span class="bar-divider"></span>${button('backup','<span>备份</span>','archive','icon-button backup','aria-label="导出或恢复备份"')}</div>`}`;
   document.getElementById('colophon').innerHTML = `<div><span class="footer-title">慢慢走</span><span class="footer-rule"></span><span>个人旅行手账</span></div><small>TRAVEL JOURNAL</small>`;
-}
-function heroArt(trip) {
-  if (trip.city.includes('南京')) return `<div class="art"><svg viewBox="0 0 600 340" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><use href="#nanjing-cut"/></svg><img src="/assets/nanjing-cover.webp" alt="南京印象，原创封面插画" class="cover-image"><small>金陵印象　/　封面插画</small></div>`;
-  return `<div class="art art-type"><span>${esc(trip.city)}</span><small>城市手账　/　VOL. ${volume(trip)}</small></div>`;
-}
-function home() {
-  selectedTripId = '';
-  const first = book.trips.at(-1);
-  const cities = citiesFromTrips(book.trips);
-  const filteredCity = cities.find(city => city.key === cityFilter);
-  if (!filteredCity) cityFilter = '';
-  const shelf = book.trips.filter(trip => !cityFilter || cityLocation(trip.city).key === cityFilter).slice().reverse();
-  const latestCity = first ? cityLocation(first.city).key : '';
-  const label = `<div class="eyebrow"><span class="small-rule"></span> 旅 行 手 账 <span class="mono"> / FIELD NOTES</span></div>`;
-  main.innerHTML = `<div class="home">
-    ${first ? `<section class="hero"><div class="hero-content">${label}
-      <div class="volume">VOL. ${volume(first)} <span>／</span> ${badge(first)}</div>
-      <h1>${esc(first.title)}</h1>
-      <p class="hero-lead">${first.id === 'nanjing-first' ? '一直想去南京，于是为它留了一册。' : `${esc(first.city)}的出发计划与沿途记录。`}</p>
-      <div class="hero-links"><a class="button primary" href="${tripLink(first.id)}">翻开手账 ${icon('arrow')}</a></div>
-    </div>${heroArt(first)}</section>` : `<section class="intro-empty">${label}<h1>我的旅行手账</h1><p>为下一次出发留一册。</p>${button('create-trip','新建手账','plus','button primary')}</section>`}
-    <div class="home-grid"><section class="shelf" id="shelf">
-      <div class="section-title"><div class="eyebrow">MY COLLECTION</div><div class="section-line"><h2>旅行书架</h2>${button('create-trip','新建一册','plus','button small')}</div></div>
-      ${cityFilter ? `<div class="filter-info">正在看 ${esc(filteredCity.label)} ${button('reset-city','查看全部','','link-button')}</div>` : ''}
-      ${shelf.map(trip => `<a class="book-row" href="${tripLink(trip.id)}">
-        <div class="book-mini"><small>VOL. ${volume(trip)}</small><b>${esc(trip.city)}</b><i></i></div>
-        <div class="book-row-text">${badge(trip)}<h3>${esc(trip.title)}</h3><span class="meta">${esc(trip.city)} <i>·</i> ${esc(dates(trip))} <i>·</i> ${totalDays(trip)}</span></div>
-        <span class="open-arrow">${icon('arrow',20)}</span></a>`).join('') || emptyBlock('书架还空着','从想去的第一个地方开始。','book')}
-    </section><section class="map-panel" id="map">
-      <div class="eyebrow">PLACES INDEX</div><div class="section-line"><h2>城市地图</h2><span class="quiet">${cities.length} 座城市</span></div>
-      <div class="map-box"><img src="/assets/china-map.svg" width="648" height="440" alt="中国城市索引地图">
-      ${cities.filter(city => city.position).map(city => `<button class="map-marker ${esc(city.status)} ${city.key === latestCity ? 'is-current' : ''}" style="left:${city.position.x}%;top:${city.position.y}%" type="button" data-action="city" data-city="${esc(city.key)}" aria-label="查看${esc(city.label)}的 ${city.tripIds.length} 册手账" title="${esc(city.label)}"><i></i><span>${esc(city.label)}</span></button>`).join('')}</div>
-      <div class="city-list">${cities.map(city => `<button class="city-link" data-action="city" data-city="${esc(city.key)}">${icon('pin',14)}${esc(city.label)} ${icon('arrow',14)}</button>`).join('')}</div>
-      ${cities.some(city => !city.position) ? `<p class="map-note">尚未定位：${cities.filter(city => !city.position).map(city => esc(city.label)).join('、')}。可从城市列表打开手账。</p>` : ''}
-      <p class="map-credit">城市坐标 · <a href="https://www.geonames.org/" target="_blank" rel="noopener noreferrer">GeoNames</a></p>
-    </section></div></div>`;
 }
 function sourceLinks(ids) {
   const sources = (book.sources || []).filter(source => ids?.includes(source.id));
@@ -167,29 +132,11 @@ function sourceLinks(ids) {
     return `<p><span>${esc(source.title)}</span>${archive ? ` <a target="_blank" rel="noopener noreferrer" href="${archive}">公开存档 ↗</a>` : ''}${original ? ` <a target="_blank" rel="noopener noreferrer" href="${original}">原帖 ↗</a>` : ''}</p>`;
   }).join('');
 }
-function candidatePanel(trip) {
-  const all = trip.candidates || [];
-  const categories = [...new Set(all.map(place => place.category).filter(Boolean))];
-  if (!categories.includes(categoryFilter)) categoryFilter = '';
-  const places = all.filter(place => (placeFilter === 'all' || place.state === placeFilter) && (!categoryFilter || place.category === categoryFilter));
-  const visible = showAllPlaces ? places : places.slice(0, 6);
-  return `<section class="paper-section">
-    <div class="section-line"><div><div class="eyebrow">PLACES TO GO</div><h2>想去的地方</h2></div>${button('add-place','添加地点','plus','button small')}</div>
-    <div class="filters" aria-label="地点筛选">${[['all','全部'],['wanted','想去'],['maybe','待定'],['candidate','候选']].map(([id,text]) => `<button aria-pressed="${id === placeFilter}" data-action="filter" data-filter="${id}">${text} <span>${id === 'all' ? all.length : all.filter(p => p.state === id).length}</span></button>`).join('')}</div>
-    ${categories.length ? `<label class="category-picker">按主题浏览 <select data-category><option value="">所有主题</option>${categories.map(name => `<option value="${esc(name)}" ${name === categoryFilter ? 'selected' : ''}>${esc(name)}</option>`).join('')}</select></label>` : ''}
-    ${trip.id === 'nanjing-first' && trip.candidates.some(place => place.sourceIds?.length) ? '<p class="source-caption">地点参考自 2024 年的攻略存档，可展开查看出处。请在出发前核实预约与开放时间。</p>' : ''}
-    ${visible.length ? `<ul class="places">${visible.map(place => `<li><div class="place-main"><span class="place-icon">${icon('pin')}</span><div><span class="tiny">${esc(place.category || '自选地点')}</span><h3>${esc(place.name)}</h3></div></div>
-      <div class="place-controls"><select aria-label="${esc(place.name)}的意向" data-place="${esc(place.id)}">${Object.entries(choiceNames).map(([id,name]) => `<option value="${id}" ${place.state === id ? 'selected' : ''}>${name}</option>`).join('')}</select>${button('edit-place',icon('edit',14),'','icon-button',`data-id="${esc(place.id)}" aria-label="修改${esc(place.name)}"`)}</div>
-      </li>`).join('')}</ul>` : emptyBlock('这里还没有地点','可以添加一个想去的地方，或调整上方的筛选。','pin')}
-    ${places.length > 6 ? button('more-places',showAllPlaces ? '收起地点' : `查看全部 ${places.length} 个地点`,'down','button expand') : ''}
-    ${all.some(place => place.sourceIds?.length) ? `<details class="reference-library"><summary>攻略参考与出处</summary>${sourceLinks([...new Set(all.flatMap(place => place.sourceIds || []))])}</details>` : ''}
-  </section>`;
-}
 function checklist(trip) {
   const items = [...(trip.plan || [])].sort((a,b) => a.day-b.day);
   const days = [...new Set(items.map(item => item.day))];
   return `<section class="paper-section"><div class="section-line"><div><h2>每天怎么走</h2><p class="chapter-description">留几个想去的地方，也留一点随心走走的时间。</p></div>${button('add-plan','添加安排','plus','button primary small')}</div>
-    ${items.length ? days.map(day => `<section class="plan-day"><h3><span>DAY ${String(day).padStart(2,'0')}</span>${dayLabel(day)}</h3><div class="checklist">${items.filter(item => item.day === day).map(item => `<div class="plan-row"><label><input type="checkbox" data-check="${esc(item.id)}" ${item.done ? 'checked' : ''}><span><strong>${esc(item.text)}</strong></span></label>${button('edit-plan',icon('edit'),'','icon-button',`data-id="${esc(item.id)}" aria-label="修改计划"`)}</div>`).join('')}</div></section>`).join('') : `<div class="chapter-empty">${icon('pages',32)}<h3>从第一天开始</h3><p>写下一个想去的地方，或一件出发前要办的事。</p></div>`}</section>`;
+    ${items.length ? days.map(day => `<section class="plan-day"><h3><span>DAY ${String(day).padStart(2,'0')}</span>${dayLabel(day)}</h3><div class="checklist">${items.filter(item => item.day === day).map(item => `<div class="plan-row"><label><input type="checkbox" data-check="${esc(item.id)}" ${item.done ? 'checked' : ''}><span><strong>${esc(item.text)}</strong>${item.placeId ? `<small>${item.done ? '已打卡' : '到访后勾选打卡'}</small>` : ''}</span></label>${button('edit-plan',icon('edit'),'','icon-button',`data-id="${esc(item.id)}" aria-label="修改计划"`)}</div>`).join('')}</div></section>`).join('') : `<div class="chapter-empty">${icon('pages',32)}<h3>从第一天开始</h3><p>写下一个想去的地方，或一件出发前要办的事。</p></div>`}</section>`;
 }
 function journalPanel(trip) {
   const entries = [...(trip.journal || [])].sort((a,b) => a.day-b.day);
@@ -207,21 +154,27 @@ function journalPanel(trip) {
 function detail(trip) {
   const isNew = selectedTripId !== trip.id;
   selectedTripId = trip.id;
+  selectedCityId = trip.cityId || '';
   if (isNew) { activeTab = readonly || trip.status === 'completed' ? 'journal' : 'plan'; placeFilter = 'all'; categoryFilter = ''; showAllPlaces = false; }
-  main.innerHTML = `<div class="trip-page">${readonly ? `<div class="breadcrumb">${icon('book')} 共享手账</div>` : `<a class="breadcrumb" href="#/">${icon('back',16)} 返回书架</a>`}
+  main.innerHTML = `<div class="trip-page">${readonly ? `<div class="breadcrumb">${icon('book')} 共享手账</div>` : `<a class="breadcrumb" href="${cityLink(trip.cityId)}">${icon('back',16)} ${esc(trip.city)}的旅行</a>`}
     <header class="trip-cover"><div class="trip-cover-text"><div class="eyebrow">${readonly ? 'SHARED JOURNAL' : `TRAVEL JOURNAL　/　VOL. ${volume(trip)}`}</div><h1>${esc(trip.title)}</h1>
       <div class="trip-info">${badge(trip)}<span>${icon('pin',15)} ${esc(trip.city)}</span><span>${icon('calendar',15)} ${esc(dates(trip))}</span><span>${totalDays(trip)}</span></div>
-      </div>${readonly ? '' : `<details class="trip-menu"><summary>管理这册 ${icon('down',14)}</summary><div>${button('edit-trip','编辑手账','edit','button small')}${button('share','只读分享','share','button small')}</div></details>`}</header>
-    ${readonly ? journalPanel(trip) : `<div class="tabs" role="group" aria-label="阅读章节">${[['plan','行程计划'],['places','地点收藏'],['journal','旅行手记']].map(([id,label]) => `<button data-action="tab" data-tab="${id}" aria-pressed="${activeTab === id}">${label}</button>`).join('')}</div>
-    ${activeTab === 'plan' ? checklist(trip) : activeTab === 'places' ? candidatePanel(trip) : journalPanel(trip)}`}</div>`;
+      ${trip.feeling ? `<p class="trip-feeling">${esc(trip.feeling)}</p>` : ''}</div>${readonly ? '' : `<details class="trip-menu"><summary>管理这册 ${icon('down',14)}</summary><div>${button('edit-trip','编辑手账','edit','button small')}${button('cover','封面与感受','photo','button small')}${button('share','只读分享','share','button small')}</div></details>`}</header>
+    ${trip.cover ? `<img class="trip-cover-photo" src="${photoUrl(trip.cover.url)}" alt="${esc(trip.cover.caption||trip.title)}">` : ''}
+    ${readonly ? journalPanel(trip) : `<div class="trip-chapter-nav"><div class="tabs" role="group" aria-label="阅读章节">${[['plan','行程计划'],['journal','旅行手记']].map(([id,label]) => `<button data-action="tab" data-tab="${id}" aria-pressed="${activeTab === id}">${label}</button>`).join('')}</div>${button('wishlist','城市未去清单','cart','link-button')}</div>
+    ${activeTab === 'plan' ? checklist(trip) : journalPanel(trip)}`}</div>`;
 }
 function render() {
   if (!book) return;
   const hash = location.hash || '#/';
   if (readonly) {
     if (book.trips[0]) detail(book.trips[0]); else main.innerHTML = emptyBlock('这册手账暂不可读','请向分享者确认链接是否有效。','book');
-  } else if (['#/','#/shelf','#/map'].includes(hash)) {
-    home();
+  } else if (['#/','#/map'].includes(hash)) {
+    atlasHome();
+  } else if (hash === '#/shelf') {
+    allTrips();
+  } else if (book.cities?.some(city => cityLink(city.id) === hash)) {
+    cityPage(book.cities.find(city => cityLink(city.id) === hash));
   } else {
     const found = book.trips.find(trip => tripLink(trip.id) === hash);
     if (found) detail(found);
@@ -250,7 +203,7 @@ function editor(title, kind, fields, id = '', deleteLabel = '') {
 function openTripEditor(trip) {
   editor(trip ? '编辑手账' : '新建一册',trip ? 'edit-trip' : 'create-trip',
     `<label>旅行标题<input name="title" required maxlength="100" value="${esc(trip?.title || '')}" placeholder="给这次出发起个名字" autofocus></label>
-     <label>城市<input name="city" required maxlength="60" value="${esc(trip?.city || '')}" placeholder="例如，南京"></label>
+     <label>城市<input name="city" required maxlength="60" value="${esc(trip?.city || currentCity()?.name || '')}" placeholder="例如，南京" ${trip ? 'readonly' : ''}></label>
      <div class="field-pair"><label>出发日期 <small>选填</small><input type="date" name="startDate" value="${esc(trip?.startDate || '')}"></label>
      <label>旅行天数 <small>选填</small><input type="number" name="days" min="1" max="366" value="${esc(trip?.days || '')}" placeholder="待定"></label></div>
      <label>旅行状态<select name="status">${Object.entries(statusNames).map(([value,name]) => `<option value="${value}" ${(trip?.status || 'planned') === value ? 'selected' : ''}>${name}</option>`).join('')}</select></label>`,
@@ -261,7 +214,7 @@ function dayField(day, trip) {
 }
 function openPlanEditor(item) {
   editor(item ? '修改计划' : '写下计划','plan',
-    `${dayField(item?.day,currentTrip())}<label>计划内容<textarea name="text" rows="3" maxlength="1000" required placeholder="想去哪里，或出发前要办什么？">${esc(item?.text || '')}</textarea></label>`,
+    `${dayField(item?.day,currentTrip())}<label>计划内容<textarea name="text" rows="3" maxlength="1000" required placeholder="想去哪里，或出发前要办什么？">${esc(item?.text || '')}</textarea></label><p class="form-hint">去过还想再去的地点，也可以直接写在这里。</p>`,
     item?.id,item ? '删除这项' : '');
 }
 function openNoteEditor(entry) {
@@ -286,7 +239,7 @@ function openBackup() {
     <p class="form-hint">请先导出当前手账。恢复后，重新创建需要分享的链接。</p><button class="button" type="submit">恢复备份</button></form></div>`);
 }
 function openShare() {
-  dialog('分享这一册',`<div class="fields"><p class="form-intro">创建此刻的只读副本，包含旅行标题、日期、城市和每日手记中的照片。候选地点和出发清单保留在个人手账。</p>
+  dialog('分享这一册',`<div class="fields"><p class="form-intro">创建此刻的只读副本，包含旅行标题、日期、城市、封面、感受和每日手记。城市未去清单和行程计划保留在个人手账。</p>
     <button class="button primary" type="button" data-action="create-share">${icon('link')} 生成或更新只读链接</button>
     <div id="share-output" aria-live="polite"></div>
     ${button('revoke-share','撤销这册的分享','','text-danger')}</div>`);
@@ -389,7 +342,10 @@ async function handleSubmit(form) {
   } else if (kind === 'create-trip' || kind === 'edit-trip') {
     const values = {title:required(val('title'),'旅行标题'),city:required(val('city'),'城市'),startDate:val('startDate'),days:val('days') ? Number(val('days')) : null,status:val('status')};
     await saveChange(draft => {
-      if (kind === 'create-trip') draft.trips.push({id,...values,candidates:[],plan:[],journal:[]});
+      if (kind === 'create-trip') {
+        const city=draft.cities.find(c=>cityLocation(c.name).key===cityLocation(values.city).key);
+        draft.trips.push({id,...values,cityId:city?.id || '',candidates:[],plan:[],journal:[]});
+      }
       else {
         const trip = getTrip(draft,tripId);
         if (values.days && [...trip.plan,...trip.journal].some(item => item.day > values.days)) {
@@ -403,7 +359,7 @@ async function handleSubmit(form) {
     const text = required(val('text'),'计划内容');
     await saveChange(draft => {
       const {plan} = getTrip(draft,tripId);
-      replaceOrAdd(plan,{id,day:Number(val('day')),text,done:plan.find(item => item.id === id)?.done || false});
+      replaceOrAdd(plan,{...plan.find(item => item.id === id),id,day:Number(val('day')),text,done:plan.find(item => item.id === id)?.done || false});
     });
   } else if (kind === 'place') {
     const name = required(val('name'),'地点名称');
@@ -415,6 +371,47 @@ async function handleSubmit(form) {
     categoryFilter = '';
     placeFilter = val('state');
     showAllPlaces = true;
+  } else if (kind === 'city') {
+    const name=required(val('name'),'城市名称');
+    let cityId=id;
+    await saveChange(draft=>{
+      const existing=draft.cities.find(c=>cityLocation(c.name).key===cityLocation(name).key);
+      if(existing) cityId=existing.id;
+      else draft.cities.push({id,name,places:[]});
+    });
+    destination=cityLink(cityId);
+  } else if (kind === 'wish') {
+    await saveChange(draft=>{
+      const city=draft.cities.find(c=>c.id===val('cityId'));
+      if(!city) throw new Error('找不到这座城市，请重新读取。');
+      const existing=city.places.find(p=>p.id===id);
+      replaceOrAdd(city.places,{id,name:required(val('name'),'名称'),kind:val('kind'),note:val('note'),visited:existing?.visited || false,sourceIds:existing?.sourceIds || []});
+    });
+    wishKind=val('kind'); closeDialog();render();openWishlist();toast('已保存');return;
+  } else if (kind === 'assign-wish') {
+    await saveChange(draft=>{
+      const city=draft.cities.find(c=>c.id===val('cityId')),place=city?.places.find(p=>p.id===id);
+      const trip=getTrip(draft,val('targetTrip'));
+      if(!place || trip.cityId!==city.id) throw new Error('找不到对应城市的旅行。');
+      const day=Number(val('day'));
+      if(trip.days && day>trip.days) throw new Error('这次旅行只有 '+trip.days+' 天，请调整天数或选择对应的日期。');
+      if(trip.plan.some(p=>p.placeId===id && p.day===day)) throw new Error('这一天已经安排了这个地点。');
+      trip.plan.push({id:crypto.randomUUID(),day,text:place.name,done:false,placeId:id});
+    });
+    closeDialog();render();openWishlist();toast('已加入行程，到访后记得打卡');return;
+  } else if (kind === 'cover') {
+    const trip=getTrip(book,tripId),file=form.elements.coverPhoto.files[0];
+    let cover=[trip.cover,...trip.journal.flatMap(e=>e.photos)].find(p=>p?.id===val('coverId')) || null;
+    if(file) {
+      if(!['image/jpeg','image/png','image/webp'].includes(file.type) || file.size>8*1024*1024) throw new Error('请选择不超过 8 MB 的 JPEG、PNG 或 WebP 照片。');
+      cover=extraPhotos.get(file);
+      if(!cover) {
+        cover=await (await request('/api/photos',{method:'POST',headers:{'Content-Type':file.type},body:file})).json();
+        extraPhotos.set(file,cover);
+      }
+      cover={...cover,caption:''};
+    }
+    await saveChange(draft=>Object.assign(getTrip(draft,tripId),{cover,feeling:val('feeling')}));
   } else if (kind === 'note') {
     const existing = entryById(getTrip(book,tripId),id,'journal');
     const photos = await preparePhotos(form,fields,existing?.photos);
@@ -431,15 +428,28 @@ async function deleteItem() {
   const form = modal.querySelector('form');
   if (!form) return;
   const kind = form.dataset.kind, id = form.dataset.id, tripId = form.dataset.trip;
+  if(kind === 'wish') {
+    if(!window.confirm('确定删除这个收藏？已加入的行程安排会保留。')) return;
+    const cityId=form.elements.cityId.value;
+    await saveChange(draft=>{
+      const city=draft.cities.find(c=>c.id===cityId);
+      city.places=city.places.filter(p=>p.id!==id);
+      draft.trips.filter(t=>t.cityId===cityId).forEach(t=>t.plan.forEach(p=>{if(p.placeId===id) delete p.placeId;}));
+    });
+    closeDialog();render();openWishlist();toast('已删除收藏');return;
+  }
   const label = kind === 'edit-trip' ? '整册旅行及其中的计划、手记和照片' : kind === 'plan' ? '这项计划' : kind === 'place' ? '这个地点' : '这条手记';
   if (!window.confirm(`确定删除${label}？本次删除无法撤销。`)) return;
   await saveChange(draft => {
+    const original=getTrip(draft,tripId);
+    const affected=original.plan.filter(p=>p.done&&p.placeId&&(kind==='edit-trip'||kind==='plan'&&p.id===id)).map(p=>p.placeId);
     if (kind === 'edit-trip') draft.trips = draft.trips.filter(trip => trip.id !== tripId);
     else {
       const trip = getTrip(draft,tripId);
       const key = kind === 'plan' ? 'plan' : kind === 'place' ? 'candidates' : 'journal';
       trip[key] = trip[key].filter(item => item.id !== id);
     }
+    syncCityVisits(draft,original.cityId,affected);
   });
   closeDialog();
   if (kind === 'edit-trip') location.hash = '#/';
@@ -456,6 +466,17 @@ async function generateShare() {
     <div class="button-group">${button('copy-share','复制链接','link','button small')}<a class="button small" href="${esc(url.href)}" target="_blank" rel="noopener">打开预览 ↗</a></div>`;
 }
 const actions = {
+  'add-city':openCityEditor,
+  'open-city':el=>{location.hash=cityLink(el.dataset.city);},
+  'zoom-in':()=>document.getElementById('travel-atlas')?.atlasZoom(1/1.5),
+  'zoom-out':()=>document.getElementById('travel-atlas')?.atlasZoom(1.5),
+  'zoom-reset':()=>document.getElementById('travel-atlas')?.atlasReset(),
+  'wishlist':openWishlist,
+  'wish-kind':el=>{wishKind=el.dataset.kind;openWishlist();},
+  'add-wish':()=>openWishEditor(null),
+  'edit-wish':el=>openWishEditor(currentCity().places.find(p=>p.id===el.dataset.id)),
+  'assign-wish':el=>openAssignWish(el.dataset.id),
+  'cover':openCoverEditor,
   'close':closeDialog,
   'create-trip':() => openTripEditor(null),
   'edit-trip':() => openTripEditor(currentTrip()),
@@ -520,7 +541,11 @@ document.addEventListener('change',event => {
       await saveChange(draft => {
         const trip = getTrip(draft,tripId);
         if (el.dataset.place) entryById(trip,el.dataset.place,'candidates').state = value;
-        else entryById(trip,el.dataset.check,'plan').done = checked;
+        else {
+          const item=entryById(trip,el.dataset.check,'plan');
+          item.done=checked;
+          if(item.placeId) syncCityVisits(draft,trip.cityId,[item.placeId]);
+        }
       });
       render();
       const selector = el.dataset.place ? `[data-place="${CSS.escape(el.dataset.place)}"]` : `[data-check="${CSS.escape(el.dataset.check)}"]`;

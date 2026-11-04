@@ -63,6 +63,17 @@ export function validateBook(value) {
     archiveUrl:link(s.archiveUrl), originalUrl:link(s.originalUrl)
   }), '资料');
   const sourceIds = new Set(sources.map(s => s.id));
+  const cityKey = name => name.normalize('NFKC').replace(/\s+/g,'').replace(/^中国/,'').replace(/^.*省/,'').replace(/(特别行政区|自治州|地区|盟|市)$/,'').toLowerCase();
+  const cities = rows(value.cities ?? [], c => ({
+    id:c.id,name:string(c.name,'城市',100,true),
+    places:rows(c.places,p => {
+      expect(['place','food'].includes(p.kind),'地点分类无效');
+      expect(typeof p.visited === 'boolean','到访状态无效');
+      expect(Array.isArray(p.sourceIds) && p.sourceIds.length <= 100 && p.sourceIds.every(s => sourceIds.has(s)),'地点来源无效');
+      return {id:p.id,name:string(p.name,'地点',256,true),kind:p.kind,note:string(p.note,'备注',8000),visited:p.visited,sourceIds:[...new Set(p.sourceIds)]};
+    },'城市地点')
+  }),'城市');
+  const photo = p => ({id:id(p.id),url:'/api/photos/' + p.id,caption:string(p.caption ?? '','照片说明',2000)});
   const trips = rows(value.trips, t => {
     expect(['planned','ongoing','completed'].includes(t.status), '旅行状态无效');
     const candidates = rows(t.candidates, c => {
@@ -72,20 +83,41 @@ export function validateBook(value) {
     }, '候选地点');
     const plan = rows(t.plan, p => {
       expect(typeof p.done === 'boolean', '清单状态无效');
-      return {id:p.id, day:day(p.day), text:string(p.text,'计划',8000,true), done:p.done};
+      return {id:p.id, day:day(p.day), text:string(p.text,'计划',8000,true), done:p.done, ...(p.placeId ? {placeId:id(p.placeId)} : {})};
     }, '计划');
     const journal = rows(t.journal, e => ({
       id:e.id, day:day(e.day), place:string(e.place,'地点'), text:string(e.text,'感受',32000),
-      photos:rows(e.photos, p => ({
-        id:p.id, url:'/api/photos/' + p.id, caption:string(p.caption,'照片说明',2000)
-      }), '照片', 100)
+      photos:rows(e.photos, photo, '照片', 100)
     }), '记录');
     return {
       id:t.id, title:string(t.title,'旅行标题',200,true), city:string(t.city,'城市',100,true),
-      startDate:date(t.startDate), days:t.days === null ? null : day(t.days), status:t.status, candidates, plan, journal
+      startDate:date(t.startDate), days:t.days === null ? null : day(t.days), status:t.status, candidates, plan, journal,
+      cityId:t.cityId ? id(t.cityId) : '',cover:t.cover ? photo(t.cover) : null,feeling:string(t.feeling ?? '','一句感受',500)
     };
   }, '旅行', 1000);
-  const book = {version:1,trips,sources};
+  for (const trip of trips) {
+    let city = trip.cityId && cities.find(c => c.id === trip.cityId);
+    if (!city) city = cities.find(c => cityKey(c.name) === cityKey(trip.city));
+    if (!city) {
+      let key = 'city-' + trip.id.slice(0,90);
+      while (cities.some(c => c.id === key)) key += '_';
+      city = {id:key,name:trip.city,places:[]}; cities.push(city);
+    }
+    trip.cityId = city.id;
+    if (value.cities === undefined) {
+      for (const candidate of trip.candidates) {
+        const existing = city.places.find(p => cityKey(p.name) === cityKey(candidate.name));
+        if (existing) existing.sourceIds = [...new Set([...existing.sourceIds,...candidate.sourceIds])];
+        else {
+          let key = candidate.id;
+          while (city.places.some(p => p.id === key)) key += '_';
+          city.places.push({id:key,name:candidate.name,kind:/吃|食|餐|面|小吃/.test(candidate.category) ? 'food' : 'place',note:candidate.category,visited:false,sourceIds:candidate.sourceIds});
+        }
+      }
+    }
+    for (const item of trip.plan) if (item.placeId) expect(city.places.some(p => p.id === item.placeId),'计划关联地点不存在');
+  }
+  const book = {version:1,trips,sources,cities};
   expect(new TextEncoder().encode(JSON.stringify(book)).length <= BOOK_LIMIT, '手账文字已超过 4 MiB');
   return book;
 }
@@ -93,6 +125,7 @@ export function validateBook(value) {
 export function referencedPhotos(book) {
   const result = new Set();
   for (const trip of book.trips) {
+    if (trip.cover) result.add(trip.cover.id);
     for (const entry of trip.journal) {
       for (const photo of entry.photos) result.add(photo.id);
     }
@@ -101,13 +134,14 @@ export function referencedPhotos(book) {
 }
 
 export function shareSnapshot(book, tripId) {
-  const trip = book.trips.find(t => t.id === tripId);
+  const trip = validateBook(book).trips.find(t => t.id === tripId);
   if (!trip) return null;
-  return {version:1, trips:[{...structuredClone(trip), candidates:[], plan:[]}], sources:[]};
+  return {version:1, trips:[{...structuredClone(trip), candidates:[], plan:[],cityId:''}], sources:[],cities:[]};
 }
 
 export function presentShared(snapshot, token) {
   const book = structuredClone(snapshot);
+  if (book.trips[0].cover) book.trips[0].cover.url = '/api/shared/' + token + '/photos/' + book.trips[0].cover.id;
   for (const entry of book.trips[0].journal) {
     for (const photo of entry.photos) photo.url = '/api/shared/' + token + '/photos/' + photo.id;
   }

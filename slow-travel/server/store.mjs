@@ -37,7 +37,7 @@ export class JournalStore {
 
   readBook() {
     const row = this.db.prepare('SELECT revision,body FROM journal WHERE id=1').get();
-    return {book:JSON.parse(row.body), etag:'"' + row.revision + '"'};
+    return {book:validateBook(JSON.parse(row.body)), etag:'"' + row.revision + '"'};
   }
 
   assertVersion(tag) {
