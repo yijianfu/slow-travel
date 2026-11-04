@@ -131,10 +131,11 @@ function heroArt(trip) {
 function home() {
   selectedTripId = '';
   const first = book.trips.at(-1);
-  const cities = [...new Set(book.trips.map(trip => trip.city))];
-  if (!cities.includes(cityFilter)) cityFilter = '';
-  const shelf = book.trips.filter(trip => !cityFilter || trip.city === cityFilter).slice().reverse();
-  const nj = book.trips.find(trip => trip.city.includes('南京'));
+  const cities = citiesFromTrips(book.trips);
+  const filteredCity = cities.find(city => city.key === cityFilter);
+  if (!filteredCity) cityFilter = '';
+  const shelf = book.trips.filter(trip => !cityFilter || cityLocation(trip.city).key === cityFilter).slice().reverse();
+  const latestCity = first ? cityLocation(first.city).key : '';
   const label = `<div class="eyebrow"><span class="small-rule"></span> 旅 行 手 账 <span class="mono"> / FIELD NOTES</span></div>`;
   main.innerHTML = `<div class="home">
     ${first ? `<section class="hero"><div class="hero-content">${label}
@@ -145,7 +146,7 @@ function home() {
     </div>${heroArt(first)}</section>` : `<section class="intro-empty">${label}<h1>我的旅行手账</h1><p>为下一次出发留一册。</p>${button('create-trip','新建手账','plus','button primary')}</section>`}
     <div class="home-grid"><section class="shelf" id="shelf">
       <div class="section-title"><div class="eyebrow">MY COLLECTION</div><div class="section-line"><h2>旅行书架</h2>${button('create-trip','新建一册','plus','button small')}</div></div>
-      ${cityFilter ? `<div class="filter-info">正在看 ${esc(cityFilter)} ${button('reset-city','查看全部','','link-button')}</div>` : ''}
+      ${cityFilter ? `<div class="filter-info">正在看 ${esc(filteredCity.label)} ${button('reset-city','查看全部','','link-button')}</div>` : ''}
       ${shelf.map(trip => `<a class="book-row" href="${tripLink(trip.id)}">
         <div class="book-mini"><small>VOL. ${volume(trip)}</small><b>${esc(trip.city)}</b><i></i></div>
         <div class="book-row-text">${badge(trip)}<h3>${esc(trip.title)}</h3><span class="meta">${esc(trip.city)} <i>·</i> ${esc(dates(trip))} <i>·</i> ${totalDays(trip)}</span></div>
@@ -153,8 +154,10 @@ function home() {
     </section><section class="map-panel" id="map">
       <div class="eyebrow">PLACES INDEX</div><div class="section-line"><h2>城市地图</h2><span class="quiet">${cities.length} 座城市</span></div>
       <div class="map-box"><img src="/assets/china-map.svg" width="648" height="440" alt="中国城市索引地图">
-      ${nj ? `<button class="map-marker ${esc(nj.status)}" type="button" data-action="city" data-city="${esc(nj.city)}" aria-label="查看${esc(nj.city)}的手账"><i></i><span>${esc(nj.city)}</span></button>` : ''}</div>
-      <div class="city-list">${cities.map(city => `<button class="city-link" data-action="city" data-city="${esc(city)}">${icon('pin',14)}${esc(city)} ${icon('arrow',14)}</button>`).join('')}</div>
+      ${cities.filter(city => city.position).map(city => `<button class="map-marker ${esc(city.status)} ${city.key === latestCity ? 'is-current' : ''}" style="left:${city.position.x}%;top:${city.position.y}%" type="button" data-action="city" data-city="${esc(city.key)}" aria-label="查看${esc(city.label)}的 ${city.tripIds.length} 册手账" title="${esc(city.label)}"><i></i><span>${esc(city.label)}</span></button>`).join('')}</div>
+      <div class="city-list">${cities.map(city => `<button class="city-link" data-action="city" data-city="${esc(city.key)}">${icon('pin',14)}${esc(city.label)} ${icon('arrow',14)}</button>`).join('')}</div>
+      ${cities.some(city => !city.position) ? `<p class="map-note">尚未定位：${cities.filter(city => !city.position).map(city => esc(city.label)).join('、')}。可从城市列表打开手账。</p>` : ''}
+      <p class="map-credit">城市坐标 · <a href="https://www.geonames.org/" target="_blank" rel="noopener noreferrer">GeoNames</a></p>
     </section></div></div>`;
 }
 function sourceLinks(ids) {
@@ -482,7 +485,7 @@ const actions = {
   'tab':el => { activeTab = el.dataset.tab; render(); main.querySelector(`[data-tab="${activeTab}"]`)?.focus({preventScroll:true}); },
   'city':el => {
     cityFilter = el.dataset.city;
-    const matches = book.trips.filter(trip => trip.city === cityFilter);
+    const matches = book.trips.filter(trip => cityLocation(trip.city).key === cityFilter);
     if (matches.length === 1) { cityFilter = ''; location.hash = tripLink(matches[0].id); }
     else { render(); document.getElementById('shelf')?.scrollIntoView(); }
   },

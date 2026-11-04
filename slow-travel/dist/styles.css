@@ -100,10 +100,14 @@ main:focus:not(:focus-visible) {outline:none}
 .map-panel {border:1px solid var(--rule);background:#f0f2e7;padding:21px 25px 16px;border-radius:4px}
 .map-panel h2 {font-size:24px}.map-box {position:relative;width:min(100%,290px);margin:6px auto 4px}
 .map-box>img {width:100%;height:auto;display:block}
-.map-marker {position:absolute;left:70.525%;top:59.846%;transform:translate(-8px,-50%);display:flex;align-items:center;padding:0;gap:5px;min-height:25px;color:var(--ink);font-size:11px;white-space:nowrap}
+.map-marker {position:absolute;transform:translate(-50%,-50%);display:grid;place-items:center;padding:0;width:18px;height:18px;color:var(--ink);font-size:11px;white-space:nowrap;z-index:1}
 .map-marker>i {display:block;width:15px;height:15px;border:3px solid var(--sheet);border-radius:50%;background:var(--gold);box-shadow:0 0 0 1px var(--ink)}
 .map-marker.completed>i {background:var(--green)}
-.map-marker span {background:var(--sheet);padding:1px 4px;border:1px solid #bac1a8;border-radius:2px}
+.map-marker span {display:none;position:absolute;bottom:24px;left:50%;transform:translateX(-50%);background:var(--sheet);padding:2px 6px;border:1px solid #bac1a8;border-radius:2px;pointer-events:none}
+.map-marker.is-current span,.map-marker:hover span,.map-marker:focus-visible span {display:block}
+.map-marker.is-current,.map-marker:hover,.map-marker:focus-visible {z-index:2}
+.map-note {font-size:11px;color:var(--muted);margin-top:12px;line-height:1.7}
+.map-credit {font-size:10px;color:var(--muted);margin-top:12px}.map-credit a {text-decoration:underline}
 .city-list {border-top:1px dashed #bcc4af;padding-top:7px;display:flex;flex-wrap:wrap;gap:8px}
 .city-link {padding:3px 0;font-weight:600}
 .city-link .icon:last-child {margin-left:5px}
