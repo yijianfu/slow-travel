@@ -177,14 +177,16 @@ function candidatePanel(trip) {
     ${trip.id === 'nanjing-first' && trip.candidates.some(place => place.sourceIds?.length) ? '<p class="source-caption">地点参考自 2024 年的攻略存档，可展开查看出处。请在出发前核实预约与开放时间。</p>' : ''}
     ${visible.length ? `<ul class="places">${visible.map(place => `<li><div class="place-main"><span class="place-icon">${icon('pin')}</span><div><span class="tiny">${esc(place.category || '自选地点')}</span><h3>${esc(place.name)}</h3></div></div>
       <div class="place-controls"><select aria-label="${esc(place.name)}的意向" data-place="${esc(place.id)}">${Object.entries(choiceNames).map(([id,name]) => `<option value="${id}" ${place.state === id ? 'selected' : ''}>${name}</option>`).join('')}</select>${button('edit-place',icon('edit',14),'','icon-button',`data-id="${esc(place.id)}" aria-label="修改${esc(place.name)}"`)}</div>
-      ${place.sourceIds?.length ? `<details class="sources"><summary>攻略来源</summary>${sourceLinks(place.sourceIds)}</details>` : ''}</li>`).join('')}</ul>` : emptyBlock('这里还没有地点','可以添加一个想去的地方，或调整上方的筛选。','pin')}
+      </li>`).join('')}</ul>` : emptyBlock('这里还没有地点','可以添加一个想去的地方，或调整上方的筛选。','pin')}
     ${places.length > 6 ? button('more-places',showAllPlaces ? '收起地点' : `查看全部 ${places.length} 个地点`,'down','button expand') : ''}
+    ${all.some(place => place.sourceIds?.length) ? `<details class="reference-library"><summary>攻略参考与出处</summary>${sourceLinks([...new Set(all.flatMap(place => place.sourceIds || []))])}</details>` : ''}
   </section>`;
 }
 function checklist(trip) {
   const items = [...(trip.plan || [])].sort((a,b) => a.day-b.day);
-  return `<section class="paper-section"><div class="section-line"><div><div class="eyebrow">BEFORE DEPARTURE</div><h2>出发清单</h2></div>${button('add-plan','写下计划','plus','button small')}</div>
-    ${items.length ? `<div class="checklist">${items.map(item => `<div class="plan-row"><label><input type="checkbox" data-check="${esc(item.id)}" ${item.done ? 'checked' : ''}><span><small>${dayLabel(item.day)}</small><strong>${esc(item.text)}</strong></span></label>${button('edit-plan',icon('edit'),'','icon-button',`data-id="${esc(item.id)}" aria-label="修改计划"`)}</div>`).join('')}</div>` : emptyBlock('还没有写下计划','可以先写一次预约、一段散步，或出发前要带的东西。','pages')}</section>`;
+  const days = [...new Set(items.map(item => item.day))];
+  return `<section class="paper-section"><div class="section-line"><div><h2>每天怎么走</h2><p class="chapter-description">留几个想去的地方，也留一点随心走走的时间。</p></div>${button('add-plan','添加安排','plus','button primary small')}</div>
+    ${items.length ? days.map(day => `<section class="plan-day"><h3><span>DAY ${String(day).padStart(2,'0')}</span>${dayLabel(day)}</h3><div class="checklist">${items.filter(item => item.day === day).map(item => `<div class="plan-row"><label><input type="checkbox" data-check="${esc(item.id)}" ${item.done ? 'checked' : ''}><span><strong>${esc(item.text)}</strong></span></label>${button('edit-plan',icon('edit'),'','icon-button',`data-id="${esc(item.id)}" aria-label="修改计划"`)}</div>`).join('')}</div></section>`).join('') : `<div class="chapter-empty">${icon('pages',32)}<h3>从第一天开始</h3><p>写下一个想去的地方，或一件出发前要办的事。</p></div>`}</section>`;
 }
 function journalPanel(trip) {
   const entries = [...(trip.journal || [])].sort((a,b) => a.day-b.day);
@@ -202,13 +204,13 @@ function journalPanel(trip) {
 function detail(trip) {
   const isNew = selectedTripId !== trip.id;
   selectedTripId = trip.id;
-  if (isNew) { activeTab = readonly ? 'journal' : 'plan'; placeFilter = 'all'; categoryFilter = ''; showAllPlaces = false; }
+  if (isNew) { activeTab = readonly || trip.status === 'completed' ? 'journal' : 'plan'; placeFilter = 'all'; categoryFilter = ''; showAllPlaces = false; }
   main.innerHTML = `<div class="trip-page">${readonly ? `<div class="breadcrumb">${icon('book')} 共享手账</div>` : `<a class="breadcrumb" href="#/">${icon('back',16)} 返回书架</a>`}
     <header class="trip-cover"><div class="trip-cover-text"><div class="eyebrow">${readonly ? 'SHARED JOURNAL' : `TRAVEL JOURNAL　/　VOL. ${volume(trip)}`}</div><h1>${esc(trip.title)}</h1>
       <div class="trip-info">${badge(trip)}<span>${icon('pin',15)} ${esc(trip.city)}</span><span>${icon('calendar',15)} ${esc(dates(trip))}</span><span>${totalDays(trip)}</span></div>
-      ${readonly ? '' : `<div class="trip-tools">${button('edit-trip','编辑手账','edit','button small')}${button('share','只读分享','share','button small')}</div>`}</div>${heroArt(trip)}</header>
-    ${readonly ? journalPanel(trip) : `<div class="tabs" role="group" aria-label="阅读章节"><button data-action="tab" data-tab="plan" aria-pressed="${activeTab === 'plan'}">${icon('pages')}出发前的计划</button><button data-action="tab" data-tab="journal" aria-pressed="${activeTab === 'journal'}">${icon('ink')}每日手记</button></div>
-    ${activeTab === 'plan' ? candidatePanel(trip)+checklist(trip) : journalPanel(trip)}`}</div>`;
+      </div>${readonly ? '' : `<details class="trip-menu"><summary>管理这册 ${icon('down',14)}</summary><div>${button('edit-trip','编辑手账','edit','button small')}${button('share','只读分享','share','button small')}</div></details>`}</header>
+    ${readonly ? journalPanel(trip) : `<div class="tabs" role="group" aria-label="阅读章节">${[['plan','行程计划'],['places','地点收藏'],['journal','旅行手记']].map(([id,label]) => `<button data-action="tab" data-tab="${id}" aria-pressed="${activeTab === id}">${label}</button>`).join('')}</div>
+    ${activeTab === 'plan' ? checklist(trip) : activeTab === 'places' ? candidatePanel(trip) : journalPanel(trip)}`}</div>`;
 }
 function render() {
   if (!book) return;
