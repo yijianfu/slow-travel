@@ -93,11 +93,16 @@ async function request(path, options = {}) {
   }
   return response;
 }
+function responseRevision(response) {
+  const revision = response.headers.get('X-Journal-Revision');
+  if (/^[1-9]\d*$/.test(revision || '')) return '"' + revision + '"';
+  return (response.headers.get('ETag') || '').replace(/^W\//, '');
+}
 async function loadBook() {
   const response = await request(readonly ? `/api/shared/${encodeURIComponent(shareToken)}` : '/api/book');
   const incoming = await response.json();
   if (!Array.isArray(incoming.trips)) throw new Error('手账数据无法读取，请重试。');
-  etag = response.headers.get('ETag') || '';
+  etag = responseRevision(response);
   book = incoming;
 }
 async function saveChange(change) {
@@ -107,7 +112,7 @@ async function saveChange(change) {
   const response = await request('/api/book', {
     method:'PUT', headers:{'Content-Type':'application/json','If-Match':etag}, body:JSON.stringify(draft)
   });
-  etag = response.headers.get('ETag') || '';
+  etag = responseRevision(response);
   book = await response.json();
   if (!etag) await loadBook();
 }
@@ -373,7 +378,7 @@ async function handleSubmit(form) {
     if (!file || !window.confirm('确定用此备份替换全部手账和照片？恢复前建议下载当前备份。')) return;
     const response = await request('/api/backup',{method:'POST',headers:{'Content-Type':'application/json','If-Match':etag},body:file});
     book = await response.json();
-    etag = response.headers.get('ETag') || '';
+    etag = responseRevision(response);
     if (!etag) await loadBook();
     destination = '#/';
   } else if (kind === 'create-trip' || kind === 'edit-trip') {

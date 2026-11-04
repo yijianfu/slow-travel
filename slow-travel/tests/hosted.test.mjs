@@ -155,6 +155,24 @@ test('hosted book requires a gateway identity, rejects foreign writes and isolat
   assert.deepEqual((await site.open('owner-b')).book, book);
 });
 
+test('gateway-weakened revision tags allow current saves and restore but reject stale writes', async t => {
+  const site = fixture(t);
+  const initial = await site.request('/api/book');
+  const book = await initial.json();
+  const tag = initial.headers.get('etag');
+  book.trips[0].title = '更新南京计划';
+  const saved = await site.request('/api/book', {method:'PUT', json:book, tag:'W/' + tag});
+  assert.equal(saved.status, 200);
+  assert.equal(saved.headers.get('x-journal-revision'), '2');
+  assert.equal((await site.request('/api/book', {method:'PUT', json:book, tag:'W/' + tag})).status, 412);
+  const current = await site.request('/api/book');
+  assert.equal(current.headers.get('x-journal-revision'), '2');
+  const backup = await (await site.request('/api/backup')).json();
+  const restored = await site.request('/api/backup', {method:'POST', json:backup, tag:'W/' + current.headers.get('etag')});
+  assert.equal(restored.status, 200);
+  assert.equal(restored.headers.get('x-journal-revision'), '3');
+});
+
 test('hosted photos are owner-scoped, included once in recoverable backups and shared only through the trip snapshot', async t => {
   const site = fixture(t);
   const { book, tag } = await site.open();

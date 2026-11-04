@@ -15,7 +15,8 @@ class HttpProblem extends Error {
 }
 function reject(status, message) { throw new HttpProblem(status, message); }
 function reply(value, status = 200, headers = {}) {
-  return Response.json(value, {status, headers: {...responseHeaders, ...headers}});
+  const revisionHeaders = headers.etag ? {'x-journal-revision':headers.etag.slice(1,-1)} : {};
+  return Response.json(value, {status, headers: {...responseHeaders, ...headers, ...revisionHeaders}});
 }
 function validated(fn, ...args) {
   try { return fn(...args); } catch (err) { reject(400, err.message || '内容格式有误'); }
@@ -59,7 +60,10 @@ async function journal(db, owner) {
 }
 function checkRevision(request, row) {
   if (!request.headers.has('if-match')) reject(428, '请先重新读取手账');
-  if (request.headers.get('if-match') !== etag(row.revision)) reject(412, '手账已在另一页修改，请重新读取后重试');
+  // The gateway may weaken ETags after compression. The numeric value is an
+  // application revision, also checked atomically by the database update.
+  const supplied = request.headers.get('if-match').replace(/^W\//, '');
+  if (supplied !== etag(row.revision)) reject(412, '手账已在另一页修改，请重新读取后重试');
 }
 async function listedPhotos(db, owner, album, book) {
   const ids = [...MODEL.referencedPhotos(book)];
